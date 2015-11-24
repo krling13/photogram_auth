@@ -3,37 +3,37 @@
   <% current_user.liked_photos.each do |photo| %>
   <div class="panel panel-default">
 
-    <div class="panel-heading">
-      <%= photo.user.username %> <%= time_ago_in_words(photo.created_at) %> ago
-    </div>
+  <div class="panel-heading">
+      <h3 class="panel-title">
+        <a href="/users/<%= photo.user.id %>"><%= photo.user.username %></a>
+        <small><%= time_ago_in_words(photo.created_at) %> ago </small>
+      </h3>
+  </div>
 
     <div class="panel-body">
       <a href="/photos/<%= photo.id %>">
         <img src="<%= photo.image %>" class="img-responsive" alt="Responsive image">
       </a>
       <p>
-        <form action="/create_like" method="post">
-          <!-- Hidden input for authenticity token to protect from forgery -->
-          <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>">
-
-          <!-- Label and input for photo_id -->
-          <input name="photo_id" type="hidden" value="<%= photo.id %>">
-
-          <!-- Label and input for user_id -->
-          <input name="user_id" type="hidden" value="<%= photo.user.id %>">
-
-          <button class="btn btn-link">
-          <i class="fa fa-heart-o"></i>
-          </button>
-
-          <% usernames = [] %>
-          <% photo.likes.each do |like| %>
-          <% usernames.push(like.user.username) %>
-          <% end %>
-          <%= usernames.to_sentence %> like this
-        </form>
+        <a href="/delete_like/<%= Like.find_by(:user => current_user, :photo => photo).id %>" class="btn btn-link">
+          <i class="fa fa-heart"></i>
+        </a>
+        <% usernames = [] %>
+        <% photo.likes.each do |like| %>
+        <% usernames.push(like.user.username) %>
+        <% end %>
+        <%= usernames.to_sentence %> like this
       </p>
       <ul class="media-list">
+        <li class="media">
+        <div class="media-body">
+          <h6 class="media-heading text-primary">
+            <a href="/users/<%= current_user.id %>"><%= current_user.username %></a>
+            <small><%= time_ago_in_words(photo.created_at) %></small>
+          </h6>
+          <p><%= photo.caption %></p>
+        </div>
+      </li>
         <% photo.comments.each do |comment| %>
         <li class="media">
           <div class="media-body">

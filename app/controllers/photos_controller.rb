@@ -1,10 +1,20 @@
-class PhotosController < ApplicationController
+  class PhotosController < ApplicationController
+    before_action :current_user_must_be_owner, :only => [:edit, :update, :destroy]
+
+  def current_user_must_be_owner
+    @photo = Photo.find(params[:id])
+    if current_user != @photo.user
+      redirect_to "/photos", :alert => "Nice try"
+    end
+  end
+
   def index
     @photos = Photo.all
   end
 
   def show
     @photo = Photo.find(params[:id])
+    @like = Like.find(params[:id])
   end
 
   def new
